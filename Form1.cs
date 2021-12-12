@@ -18,6 +18,10 @@ namespace RayTracing
             InitializeComponent();
             rayTracing = new RayTracing();
             rayTracing.renderProgress += updateProgress;
+            rayTracing.addShape(new Sphere(new Point(-3, 0, 16), 2, Color.DarkSalmon));
+            rayTracing.addShape(new Sphere(new Point(-1, -1.5, 12), 2, Color.DarkRed));
+            rayTracing.addShape(new Sphere(new Point(1.5, -0.5, 18), 3, Color.DarkGreen));
+            rayTracing.addShape(new Sphere(new Point(7, 5, 28), 4, Color.DarkBlue));
         }
 
         // Спасибо лабе по ИС за реализацию такой же штуки
@@ -43,7 +47,7 @@ namespace RayTracing
         {
             try
             {
-                var bitmap = await Task.Run(() => rayTracing.compute(new Size(300,300)));
+                var bitmap = await Task.Run(() => rayTracing.compute(new Size(800,400)));
                 var form = new FormResult(bitmap);
                 form.Show();
             } catch (Exception e)

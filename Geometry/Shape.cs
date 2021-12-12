@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RayTracing.Geometry
+namespace RayTracing
 {
     abstract class Shape
     {
         public Point center;
+        public Color color;
 
-        public abstract Point? getIntersection(Vector direction, Point origin);
+        public abstract Point getIntersection(Vector direction, Point origin);
     }
 }

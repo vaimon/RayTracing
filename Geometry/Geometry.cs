@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RayTracing.Geometry
+namespace RayTracing
 {
     class Geometry
     {
@@ -22,6 +22,16 @@ namespace RayTracing.Geometry
         public static Point pointOnLine(Point origin, Vector direction, double parameter)
         {
             return new Point(origin.x + direction.x * parameter, origin.y + direction.y * parameter, origin.z + direction.z * parameter);
+        }
+
+        public static double degreesToRadians(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
+        public static double radiansToDegrees(double angle)
+        {
+            return angle * 180 / Math.PI;
         }
     }
 }

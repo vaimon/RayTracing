@@ -16,23 +16,34 @@ namespace RayTracing
       
         public event RenderProgressHandler renderProgress;
 
-        public int simulate()
+        List<Shape> scene;
+        const double fov = 60;
+        Point cameraPosition = new Point(0, 0, 0);
+
+        public RayTracing()
         {
-            var start = DateTime.Now;
-            onProgressIncremented(0.0, DateTime.Now - start);
-            for (int i = 0; i < 100; i++)
+            scene = new List<Shape>();
+        }
+
+        public void addShape(Shape shape)
+        {
+            scene.Add(shape);
+        }
+
+        Color shootRay(Vector direction)
+        {
+            double nearestPoint = double.MaxValue;
+            Color res = Color.Gray;
+            foreach (var shape in scene)
             {
-                for (int j = 0; j < 10000; j++)
+                Point intersection;
+                if((intersection = shape.getIntersection(direction,cameraPosition)) != null && intersection.z < nearestPoint)
                 {
-                    for (int k = 0; k < 10000; k++)
-                    {
-                        continue;
-                    }
+                    nearestPoint = intersection.z;
+                    res = shape.color;
                 }
-                onProgressIncremented(i * 1.0 / 100, DateTime.Now - start);
             }
-            onProgressIncremented(1.0, DateTime.Now - start);
-            return 1;
+            return res;
         }
 
         public Bitmap compute(Size frameSize)
@@ -40,7 +51,6 @@ namespace RayTracing
             var start = DateTime.Now;
             onProgressIncremented(0.0, DateTime.Now - start);
             var bitmap = new Bitmap(frameSize.Width, frameSize.Height);
-            Random rand = new Random();
             int processedPixelCount = 0;
             double totalPixelCount = frameSize.Width * frameSize.Height;
 
@@ -49,7 +59,12 @@ namespace RayTracing
                 {
                     for(int y = 0; y < frameSize.Height; y++)
                     {
-                        fbitmap.SetPixel(new Point(x,y),Color.FromArgb(rand.Next(255), rand.Next(255), rand.Next(255), rand.Next(255)));
+                        // Формулу для лучей в итоге дёрнул отсюда (тут фов красиво задаётся, а не двиганием экрана...): https://habr.com/ru/post/436790/
+                        Vector ray = new Vector((2 * (x + 0.5) / frameSize.Width - 1) * Math.Tan(Geometry.degreesToRadians(fov / 2)) * frameSize.Width / frameSize.Height,
+                                                -(2 * (y + 0.5) / frameSize.Height - 1) * Math.Tan(Geometry.degreesToRadians(fov / 2)),
+                                                1, true);
+                        var color = shootRay(ray);
+                        fbitmap.SetPixel(new System.Drawing.Point(x,y),color);
                         processedPixelCount++;
                         if(y % 10 == 0)
                         {
