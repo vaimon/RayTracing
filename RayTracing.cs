@@ -43,6 +43,7 @@ namespace RayTracing
             Random rand = new Random();
             int processedPixelCount = 0;
             double totalPixelCount = frameSize.Width * frameSize.Height;
+
             using (FastBitmap fbitmap = new FastBitmap(bitmap)) {    
                 for(int x = 0; x < frameSize.Width; x++)
                 {
