@@ -36,22 +36,20 @@ namespace RayTracing
         {
             labelTime.Visible = true;
             progressBar.Visible = true;
-            var x = runAsync();
-           
+            runAsyncComputation();
         }
 
-        async Task<int> runAsync()
+        async void runAsyncComputation()
         {
-            int x = -1;
             try
             {
-                x = await Task.Run(() => rayTracing.simulate());
+                var bitmap = await Task.Run(() => rayTracing.compute(new Size(300,300)));
+                var form = new FormResult(bitmap);
+                form.Show();
             } catch (Exception e)
             {
                 labelTime.Text = "HAHA exception";
             }
-            labelTime.Text = $"hello";
-            return x;
         }
     }
 }
