@@ -30,7 +30,7 @@ namespace RayTracing
                 {
                     return null;
                 }
-                else if (Geometry.distance(origin, center) - radius < 0.0001)       // Мы на сфере
+                else if (Geometry.distance(origin, center) - radius < 0.000001)       // Мы на сфере
                 {
                     return origin;
                 }
@@ -59,7 +59,7 @@ namespace RayTracing
                     {
                         distance = Geometry.distance(origin, projection) + distance;
                     }
-                    return Geometry.pointOnLine(projection, direction, distance);
+                    return Geometry.pointOnLine(origin, direction, distance);
                 }
             }
         }

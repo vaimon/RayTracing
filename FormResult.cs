@@ -24,7 +24,7 @@ namespace RayTracing
         {
             if(saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                bitmap.Save(saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                bitmap.Save(saveFileDialog1.FileName, System.Drawing.Imaging.ImageFormat.Png);
             }
         }
     }

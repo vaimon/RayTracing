@@ -19,15 +19,26 @@ namespace RayTracing
         List<Shape> scene;
         const double fov = 60;
         Point cameraPosition = new Point(0, 0, 0);
+        LightSource lightSource;
 
-        public RayTracing()
+        public RayTracing(LightSource lightSource)
         {
+            this.lightSource = lightSource;
             scene = new List<Shape>();
         }
 
         public void addShape(Shape shape)
         {
             scene.Add(shape);
+        }
+
+        static Color changeColorIntensity(Color color, double intensity)
+        {
+            if(intensity < 0)
+            {
+                throw new Exception("Intensity must be >= 0!");
+            }
+            return Color.FromArgb((byte)Math.Clamp(Math.Round(color.R * intensity),0,255), (byte)Math.Clamp(Math.Round(color.G * intensity), 0, 255), (byte)Math.Clamp(Math.Round(color.B * intensity), 0, 255));
         }
 
         Color shootRay(Vector direction)
@@ -40,7 +51,10 @@ namespace RayTracing
                 if((intersection = shape.getIntersection(direction,cameraPosition)) != null && intersection.z < nearestPoint)
                 {
                     nearestPoint = intersection.z;
-                    res = shape.color;
+                    var normale = new Vector(shape.center, intersection, true);
+                    var shadowRay = new Vector(intersection, lightSource.location, true);
+                    var hmm = shadowRay ^ normale;
+                    res = changeColorIntensity(shape.color, lightSource.intensity * Math.Clamp(shadowRay ^ normale,0.0,double.MaxValue));
                 }
             }
             return res;

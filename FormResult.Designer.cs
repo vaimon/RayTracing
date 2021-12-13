@@ -57,7 +57,7 @@ namespace RayTracing
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.Filter = "JPEG|*.jpeg";
+            this.saveFileDialog1.Filter = "PNG|*.png";
             this.saveFileDialog1.InitialDirectory = "C:\\Code\\RayTracing\\saved";
             // 
             // FormResult
