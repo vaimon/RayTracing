@@ -17,7 +17,7 @@ namespace RayTracing
         public event RenderProgressHandler renderProgress;
 
         List<Shape> scene;
-        const double fov = 60;
+        const double fov = 80;
         Point cameraPosition = new Point(0, 0, 0);
         LightSource lightSource;
         Room room;
