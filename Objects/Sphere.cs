@@ -20,7 +20,7 @@ namespace RayTracing
 
 
         // http://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/
-        public override Point getIntersection(Vector direction, Point origin)
+        public override Tuple<Point, Vector> getIntersection(Vector direction, Point origin)
         {
             direction = direction.normalize();
             Vector sourceToCenter = new Vector(origin, center);
@@ -32,13 +32,15 @@ namespace RayTracing
                 }
                 else if (Geometry.distance(origin, center) - radius < 0.000001)       // Мы на сфере
                 {
-                    return origin;
+                    //return origin;
+                    return null;
                 }
                 else                                                                // Мы внутри сферы
                 {
                     Point projection = Geometry.getPointProjection(origin, direction, center);
                     double distance = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(Geometry.distance(center, projection), 2)) - Geometry.distance(origin,projection);
-                    return Geometry.pointOnLine(origin, direction, distance);
+                    var intersection = Geometry.pointOnLine(origin, direction, distance);
+                    return Tuple.Create(intersection, new Vector(center, intersection, true));
                 }
             }
             else        // Центр сферы можно спроецировать на луч
@@ -59,7 +61,8 @@ namespace RayTracing
                     {
                         distance = Geometry.distance(origin, projection) + distance;
                     }
-                    return Geometry.pointOnLine(origin, direction, distance);
+                    var intersection = Geometry.pointOnLine(origin, direction, distance);
+                    return Tuple.Create(intersection, new Vector(center, intersection, true));
                 }
             }
         }

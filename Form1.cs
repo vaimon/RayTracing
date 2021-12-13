@@ -16,12 +16,15 @@ namespace RayTracing
         public Form1()
         {
             InitializeComponent();
-            rayTracing = new RayTracing(new LightSource(new Point(-20,20,-20),1.5));
+            rayTracing = new RayTracing(new LightSource(new Point(0,30,15),2), new Room(new Point(0,0,15),30, Color.LightGray));
             rayTracing.renderProgress += updateProgress;
-            rayTracing.addShape(new Sphere(new Point(-3, 0, 16), 2, Color.DarkSalmon));
-            rayTracing.addShape(new Sphere(new Point(-1, -1.5, 12), 2, Color.DarkRed));
-            rayTracing.addShape(new Sphere(new Point(1.5, -0.5, 18), 3, Color.DarkGreen));
-            rayTracing.addShape(new Sphere(new Point(7, 5, 18), 4, Color.DarkBlue));
+            rayTracing.addShape(new Sphere(new Point(0, 0, 16), 2, Color.DarkSalmon));
+            //rayTracing.addShape(new Sphere(new Point(-1, -1.5, 12), 3, Color.DarkRed));
+            rayTracing.addShape(new Cube(new Point(-5,-3,25), 4, Color.DarkRed));
+            //rayTracing.addShape(new Face(new Point(4, 0, 6), new Vector(1, 0, 0), new Vector(0, 1, 0), 4, 4, Color.DarkRed));
+            //rayTracing.addShape(new Face(new Point(0, 0, 6), new Vector(0, 0, -1), new Vector(0, 1, 0), 4, 4, Color.DarkRed));
+            //rayTracing.addShape(new Sphere(new Point(0, 0, 6), 2, Color.DarkRed));
+            //rayTracing.addShape(new Sphere(new Point(7, 5, 18), 4, Color.DarkBlue));
         }
 
         // Спасибо лабе по ИС за реализацию такой же штуки

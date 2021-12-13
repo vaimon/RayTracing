@@ -12,6 +12,6 @@ namespace RayTracing
         public Point center;
         public Color color;
 
-        public abstract Point getIntersection(Vector direction, Point origin);
+        public abstract Tuple<Point,Vector> getIntersection(Vector direction, Point origin);
     }
 }

@@ -20,10 +20,12 @@ namespace RayTracing
         const double fov = 60;
         Point cameraPosition = new Point(0, 0, 0);
         LightSource lightSource;
+        Room room;
 
-        public RayTracing(LightSource lightSource)
+        public RayTracing(LightSource lightSource, Room room)
         {
             this.lightSource = lightSource;
+            this.room = room;
             scene = new List<Shape>();
         }
 
@@ -44,18 +46,22 @@ namespace RayTracing
         Color shootRay(Vector direction)
         {
             double nearestPoint = double.MaxValue;
-            Color res = Color.Gray;
+            Color res = Color.Transparent;
             foreach (var shape in scene)
             {
-                Point intersection;
-                if((intersection = shape.getIntersection(direction,cameraPosition)) != null && intersection.z < nearestPoint)
+                Tuple<Point,Vector> intersectionAndNormale;
+                if((intersectionAndNormale = shape.getIntersection(direction,cameraPosition)) != null && intersectionAndNormale.Item1.z < nearestPoint)
                 {
-                    nearestPoint = intersection.z;
-                    var normale = new Vector(shape.center, intersection, true);
-                    var shadowRay = new Vector(intersection, lightSource.location, true);
-                    var hmm = shadowRay ^ normale;
-                    res = changeColorIntensity(shape.color, lightSource.intensity * Math.Clamp(shadowRay ^ normale,0.0,double.MaxValue));
+                    nearestPoint = intersectionAndNormale.Item1.z;
+                    var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
+                    res = changeColorIntensity(shape.color, lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2,0.0,double.MaxValue));
                 }
+            }
+            if(res.ToArgb() == Color.Transparent.ToArgb())
+            {
+                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(direction, cameraPosition);
+                var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
+                res = changeColorIntensity(room.color, lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue));
             }
             return res;
         }
