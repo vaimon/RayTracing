@@ -34,22 +34,31 @@ namespace RayTracing
             this.labelTime = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.canvas = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.transparencyValue = new System.Windows.Forms.NumericUpDown();
+            this.mirrorValue = new System.Windows.Forms.NumericUpDown();
+            this.checkTransparency = new System.Windows.Forms.CheckBox();
+            this.checkMirror = new System.Windows.Forms.CheckBox();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.buttonChangeColor = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.transparencyValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mirrorValue)).BeginInit();
             this.SuspendLayout();
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(163, 457);
+            this.progressBar.Location = new System.Drawing.Point(12, 457);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(598, 44);
+            this.progressBar.Size = new System.Drawing.Size(749, 44);
             this.progressBar.TabIndex = 0;
             this.progressBar.Visible = false;
             // 
             // btnCompute
             // 
-            this.btnCompute.Location = new System.Drawing.Point(9, 457);
+            this.btnCompute.Location = new System.Drawing.Point(719, 404);
             this.btnCompute.Name = "btnCompute";
             this.btnCompute.Size = new System.Drawing.Size(148, 44);
             this.btnCompute.TabIndex = 1;
@@ -88,21 +97,94 @@ namespace RayTracing
             this.canvas.TabStop = false;
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseClick);
             // 
-            // label1
+            // groupBox2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(690, 144);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 25);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "label1";
+            this.groupBox2.Controls.Add(this.buttonChangeColor);
+            this.groupBox2.Controls.Add(this.transparencyValue);
+            this.groupBox2.Controls.Add(this.mirrorValue);
+            this.groupBox2.Controls.Add(this.checkTransparency);
+            this.groupBox2.Controls.Add(this.checkMirror);
+            this.groupBox2.Location = new System.Drawing.Point(608, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(381, 257);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Настройки объекта";
+            // 
+            // transparencyValue
+            // 
+            this.transparencyValue.DecimalPlaces = 2;
+            this.transparencyValue.Enabled = false;
+            this.transparencyValue.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.transparencyValue.Location = new System.Drawing.Point(225, 202);
+            this.transparencyValue.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.transparencyValue.Name = "transparencyValue";
+            this.transparencyValue.Size = new System.Drawing.Size(122, 31);
+            this.transparencyValue.TabIndex = 1;
+            // 
+            // mirrorValue
+            // 
+            this.mirrorValue.DecimalPlaces = 2;
+            this.mirrorValue.Enabled = false;
+            this.mirrorValue.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.mirrorValue.Location = new System.Drawing.Point(225, 136);
+            this.mirrorValue.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.mirrorValue.Name = "mirrorValue";
+            this.mirrorValue.Size = new System.Drawing.Size(122, 31);
+            this.mirrorValue.TabIndex = 1;
+            // 
+            // checkTransparency
+            // 
+            this.checkTransparency.AutoSize = true;
+            this.checkTransparency.Location = new System.Drawing.Point(27, 203);
+            this.checkTransparency.Name = "checkTransparency";
+            this.checkTransparency.Size = new System.Drawing.Size(156, 29);
+            this.checkTransparency.TabIndex = 0;
+            this.checkTransparency.Text = "Прозрачность";
+            this.checkTransparency.UseVisualStyleBackColor = true;
+            // 
+            // checkMirror
+            // 
+            this.checkMirror.AutoSize = true;
+            this.checkMirror.Location = new System.Drawing.Point(27, 137);
+            this.checkMirror.Name = "checkMirror";
+            this.checkMirror.Size = new System.Drawing.Size(149, 29);
+            this.checkMirror.TabIndex = 0;
+            this.checkMirror.Text = "Зеркальность";
+            this.checkMirror.UseVisualStyleBackColor = true;
+            // 
+            // buttonChangeColor
+            // 
+            this.buttonChangeColor.Location = new System.Drawing.Point(111, 60);
+            this.buttonChangeColor.Name = "buttonChangeColor";
+            this.buttonChangeColor.Size = new System.Drawing.Size(148, 42);
+            this.buttonChangeColor.TabIndex = 2;
+            this.buttonChangeColor.Text = "Изменить цвет";
+            this.buttonChangeColor.UseVisualStyleBackColor = true;
+            this.buttonChangeColor.Click += new System.EventHandler(this.buttonChangeColor_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1001, 518);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelTime);
             this.Controls.Add(this.btnCompute);
@@ -111,6 +193,10 @@ namespace RayTracing
             this.Text = "Корнуэльская комната";
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.transparencyValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mirrorValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -123,7 +209,13 @@ namespace RayTracing
         private System.Windows.Forms.Label labelTime;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox canvas;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.NumericUpDown transparencyValue;
+        private System.Windows.Forms.NumericUpDown mirrorValue;
+        private System.Windows.Forms.CheckBox checkTransparency;
+        private System.Windows.Forms.CheckBox checkMirror;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.Button buttonChangeColor;
     }
 }
 

@@ -11,18 +11,17 @@ namespace RayTracing
     {
         double side;
         private List<Face> faces;
-        public Room(Point center, double side, Color color)
+        public Room(Point center, double side, Face leftWall, Face rightWall, Face backWall)
         {
             this.center = center;
             this.side = side;
-            this.color = color;
             faces = new List<Face>();
-            faces.Add(new Face(new Point(center.x, center.y, center.z + side / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), side, side,Color.Gray));
-            faces.Add(new Face(new Point(center.x, center.y, center.z - side / 2), new Vector(0, 0, 1), new Vector(0, 1, 0), side, side,Color.Gray));
+            faces.Add(backWall);
+            faces.Add(new Face(new Point(center.x, center.y, center.z - side / 2), new Vector(0, 0, 1), new Vector(0, 1, 0), side, side,Color.Lime));
             faces.Add(new Face(new Point(center.x, center.y + side / 2, center.z), new Vector(0, -1, 0), new Vector(0, 0, 1), side, side,Color.Gray));
             faces.Add(new Face(new Point(center.x, center.y - side / 2, center.z), new Vector(0, 1, 0), new Vector(0, 0, 1), side, side,Color.Gray));
-            faces.Add(new Face(new Point(center.x + side / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), side, side,Color.Navy));
-            faces.Add(new Face(new Point(center.x - side / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), side, side, Color.IndianRed));
+            faces.Add(rightWall);
+            faces.Add(leftWall);
         }
 
         public override Tuple<Point, Vector> getIntersection(Vector direction, Point origin)

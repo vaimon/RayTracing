@@ -15,39 +15,53 @@ namespace RayTracing
     {
         RayTracing rayTracing;
 
-        Rectangle backWall;
-        Rectangle cube;
-        Rectangle sphereOnCube;
-        Rectangle sphereOnGround;
+        // ========================== SCHEME DRAWING ==========================
+        Rectangle backWallScheme;
+        Rectangle cubeScheme;
+        Rectangle sphereOnCubeScheme;
+        Rectangle sphereOnGroundScheme;
         
-
         Pen standardPen = new Pen(Color.Black, 2);
-        Pen highlightPen = new Pen(Color.DarkRed, 4);
+        Pen highlightPen = new Pen(Color.WhiteSmoke, 4);
         Graphics g;
+        // ====================================================================
 
-        SelectedItem currentItem;
+        SelectedItem currentItemType;
+        Shape currentItem;
+
+        Cube cube;
+        Sphere sphereOnCube;
+        Sphere sphereOnGround;
+        Face leftWall;
+        Face rightWall;
+        Face backWall;
 
         public Form1()
         {
             InitializeComponent();
             canvas.Image = new Bitmap(canvas.Width,canvas.Height);
             g = Graphics.FromImage(canvas.Image);
-            rayTracing = new RayTracing(new LightSource(new Point(0,10,10),1.5), new Room(new Point(0,0,9),20, Color.Gray));
-            rayTracing.renderProgress += updateProgress;
-            rayTracing.addShape(new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon));
-            //rayTracing.addShape(new Sphere(new Point(-1, -1.5, 12), 3, Color.DarkRed));
-            rayTracing.addShape(new Cube(new Point(-5,-6,17), 6, Color.DarkRed));
-            rayTracing.addShape(new Sphere(new Point(-5, -1, 17), 2, Color.DarkGreen));
-            //rayTracing.addShape(new Face(new Point(4, 0, 6), new Vector(1, 0, 0), new Vector(0, 1, 0), 4, 4, Color.DarkRed));
-            //rayTracing.addShape(new Face(new Point(0, 0, 6), new Vector(0, 0, -1), new Vector(0, 1, 0), 4, 4, Color.DarkRed));
-            //rayTracing.addShape(new Sphere(new Point(0, 0, 6), 2, Color.DarkRed));
-            //rayTracing.addShape(new Sphere(new Point(7, 5, 18), 4, Color.DarkBlue));
 
-            backWall = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 100, 200, 200);
-            cube = new Rectangle(canvas.Width / 2 - 125, canvas.Height / 2 + 25, 100, 100);
-            sphereOnCube = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 25, 50, 50);
-            sphereOnGround = new Rectangle(canvas.Width / 2 + 25, canvas.Height / 2 + 40, 100, 100);
-            currentItem = SelectedItem.BackWall;
+            var center = new Point(0, 0, 9);
+            double roomSide = 20;
+
+            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon);
+            cube = new Cube(new Point(-5,-7,17), 6, Color.DarkRed);
+            sphereOnCube = new Sphere(new Point(-5, -2, 17), 2, Color.DarkGreen);
+            leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed);
+            rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy);
+            backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray);
+
+
+            rayTracing = new RayTracing(new LightSource(new Point(0, 10, 10), 1.5), new Room(center, roomSide,leftWall,rightWall,backWall));
+            rayTracing.renderProgress += updateProgress;
+
+            backWallScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 100, 200, 200);
+            cubeScheme = new Rectangle(canvas.Width / 2 - 125, canvas.Height / 2 + 25, 100, 100);
+            sphereOnCubeScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 25, 50, 50);
+            sphereOnGroundScheme = new Rectangle(canvas.Width / 2 + 25, canvas.Height / 2 + 40, 100, 100);
+            currentItemType = SelectedItem.BackWall;
+            currentItem = backWall;
             redrawScheme();
         }
 
@@ -55,9 +69,9 @@ namespace RayTracing
 
         void redrawScheme()
         {
-            g.Clear(SystemColors.Control);
+            g.Clear(Color.Gray);
             Pen backwallPen = standardPen, rightwallPen = standardPen, leftwallPen = standardPen, sphereOnCubePen = standardPen, sphereOnGroundPen = standardPen, cubePen = standardPen;
-            switch (currentItem)
+            switch (currentItemType)
             {
                 case SelectedItem.BackWall: backwallPen = highlightPen; break;
                 case SelectedItem.Cube: cubePen = highlightPen; break;
@@ -66,38 +80,41 @@ namespace RayTracing
                 case SelectedItem.SphereOnCube: sphereOnCubePen = highlightPen; break;
                 case SelectedItem.SphereOnGround: sphereOnGroundPen = highlightPen; break;
             }
+
+            g.FillRectangle(new SolidBrush(backWall.color), backWallScheme);
+            g.DrawLine(backwallPen, backWallScheme.Location, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y));
+            g.DrawLine(backwallPen, backWallScheme.Location, new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y + backWallScheme.Height));
+            g.DrawLine(backwallPen, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y), new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height));
+            g.DrawLine(backwallPen, new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y + backWallScheme.Height), new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height));
+
+            g.FillPolygon(new SolidBrush(leftWall.color), new PointF[] { new System.Drawing.Point(0, 0), backWallScheme.Location, new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y + backWallScheme.Height), new System.Drawing.Point(0, canvas.Height) });
+            g.DrawLine(leftwallPen, backWallScheme.Location, new System.Drawing.Point(0,0));
+            g.DrawLine(leftwallPen, new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y + backWallScheme.Height), new System.Drawing.Point(0, canvas.Height));
+            if(currentItemType == SelectedItem.LeftWall)
+            {
+                g.DrawLine(leftwallPen, backWallScheme.Location, new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y + backWallScheme.Height));
+            }
+
+            g.FillPolygon(new SolidBrush(rightWall.color), new PointF[] { new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y), new System.Drawing.Point(canvas.Width, 0), new System.Drawing.Point(canvas.Width, canvas.Height), new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height) });
+            g.DrawLine(rightwallPen, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y), new System.Drawing.Point(canvas.Width,0));
+            g.DrawLine(rightwallPen, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height), new System.Drawing.Point(canvas.Width, canvas.Height));
+            if(currentItemType == SelectedItem.RightWall)
+            {
+                g.DrawLine(rightwallPen, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y), new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height));
+            }
+
             
-            var shapeBrush = new SolidBrush(SystemColors.Control);
 
-            g.DrawLine(backwallPen, backWall.Location, new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y));
-            g.DrawLine(backwallPen, backWall.Location, new System.Drawing.Point(backWall.Location.X, backWall.Location.Y + backWall.Height));
-            g.DrawLine(backwallPen, new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y), new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y + backWall.Height));
-            g.DrawLine(backwallPen, new System.Drawing.Point(backWall.Location.X, backWall.Location.Y + backWall.Height), new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y + backWall.Height));
+            g.FillRectangle(new SolidBrush(cube.color), cubeScheme);
+            g.DrawRectangle(cubePen, cubeScheme);
 
-            g.DrawLine(leftwallPen, backWall.Location, new System.Drawing.Point(0,0));
-            g.DrawLine(leftwallPen, new System.Drawing.Point(backWall.Location.X, backWall.Location.Y + backWall.Height), new System.Drawing.Point(0, canvas.Height));
-            if(currentItem == SelectedItem.LeftWall)
-            {
-                g.DrawLine(leftwallPen, backWall.Location, new System.Drawing.Point(backWall.Location.X, backWall.Location.Y + backWall.Height));
-            }
+            g.FillEllipse(new SolidBrush(sphereOnCube.color), sphereOnCubeScheme);
+            g.DrawEllipse(sphereOnCubePen, sphereOnCubeScheme);
 
-            g.DrawLine(rightwallPen, new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y), new System.Drawing.Point(canvas.Width,0));
-            g.DrawLine(rightwallPen, new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y + backWall.Height), new System.Drawing.Point(canvas.Width, canvas.Height));
-            if(currentItem == SelectedItem.RightWall)
-            {
-                g.DrawLine(rightwallPen, new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y), new System.Drawing.Point(backWall.Location.X + backWall.Width, backWall.Location.Y + backWall.Height));
-            }
+            g.FillEllipse(new SolidBrush(sphereOnGround.color), sphereOnGroundScheme);
+            g.DrawEllipse(sphereOnGroundPen, sphereOnGroundScheme);
 
-            g.FillRectangle(shapeBrush, cube);
-            g.DrawRectangle(cubePen, cube);
-
-            g.FillEllipse(shapeBrush, sphereOnCube);
-            g.DrawEllipse(sphereOnCubePen, sphereOnCube);
-
-            g.FillEllipse(shapeBrush, sphereOnGround);
-            g.DrawEllipse(sphereOnGroundPen, sphereOnGround);
-
-
+            g.FillEllipse(new SolidBrush(Color.Gold), new Rectangle(canvas.Width / 2 - 11, 50, 25, 7));
 
             canvas.Invalidate();
         }
@@ -118,6 +135,9 @@ namespace RayTracing
         {
             labelTime.Visible = true;
             progressBar.Visible = true;
+            rayTracing.addShape(sphereOnCube);
+            rayTracing.addShape(cube);
+            rayTracing.addShape(sphereOnGround);
             runAsyncComputation();
         }
 
@@ -136,28 +156,45 @@ namespace RayTracing
 
         private void canvas_MouseClick(object sender, MouseEventArgs e)
         {
-            if (cube.Contains(e.Location))
+            if (cubeScheme.Contains(e.Location))
             {
-                currentItem = SelectedItem.Cube;
-            }else if (sphereOnCube.Contains(e.Location))
+                currentItemType = SelectedItem.Cube;
+                currentItem = cube;
+            }else if (sphereOnCubeScheme.Contains(e.Location))
             {
-                currentItem = SelectedItem.SphereOnCube;
-            } else if (sphereOnGround.Contains(e.Location))
+                currentItemType = SelectedItem.SphereOnCube;
+                currentItem = sphereOnCube;
+            } else if (sphereOnGroundScheme.Contains(e.Location))
             {
-                currentItem = SelectedItem.SphereOnGround;
-            } else if (backWall.Contains(e.Location))
+                currentItemType = SelectedItem.SphereOnGround;
+                currentItem = sphereOnGround; 
+            } else if (backWallScheme.Contains(e.Location))
             {
-                currentItem = SelectedItem.BackWall;
-            }else if(e.Location.X < backWall.Location.X)
-            {
-                currentItem = SelectedItem.LeftWall;
+                currentItemType = SelectedItem.BackWall;
+                currentItem = backWall;
             }
-            else if (e.Location.X > backWall.Location.X + backWall.Width)
+            else if(e.Location.X < backWallScheme.Location.X)
             {
-                currentItem = SelectedItem.RightWall;
+                currentItemType = SelectedItem.LeftWall;
+                currentItem = leftWall;
+            }
+            else if (e.Location.X > backWallScheme.Location.X + backWallScheme.Width)
+            {
+                currentItemType = SelectedItem.RightWall;
+                currentItem = rightWall;
             }
 
             redrawScheme();
+        }
+
+        private void buttonChangeColor_Click(object sender, EventArgs e)
+        {
+            colorDialog1.Color = currentItem.color;
+            if(colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                currentItem.color = colorDialog1.Color;
+                redrawScheme();
+            }
         }
     }
 }
