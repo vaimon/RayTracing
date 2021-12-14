@@ -43,6 +43,18 @@ namespace RayTracing
             return Color.FromArgb((byte)Math.Clamp(Math.Round(color.R * intensity),0,255), (byte)Math.Clamp(Math.Round(color.G * intensity), 0, 255), (byte)Math.Clamp(Math.Round(color.B * intensity), 0, 255));
         }
 
+        bool doesRayIntersectSomething(Vector direction, Point origin)
+        {
+            foreach (var shape in scene)
+            {
+                if (shape.getIntersection(direction, origin) != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         Color shootRay(Vector direction)
         {
             double nearestPoint = double.MaxValue;
@@ -54,14 +66,32 @@ namespace RayTracing
                 {
                     nearestPoint = intersectionAndNormale.Item1.z;
                     var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
-                    res = changeColorIntensity(shape.color, lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2,0.0,double.MaxValue));
+                    double lightness;
+                    if (doesRayIntersectSomething(shadowRay, intersectionAndNormale.Item1))
+                    {
+                        lightness = 0.1;
+                    }
+                    else
+                    {
+                        lightness = lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue);
+                    }
+                    res = changeColorIntensity(shape.color, lightness);
                 }
             }
             if(res.ToArgb() == Color.Transparent.ToArgb())
             {
                 Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(direction, cameraPosition);
                 var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
-                res = changeColorIntensity(room.color, lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue));
+                double lightness;
+                if (doesRayIntersectSomething(shadowRay, intersectionAndNormale.Item1))
+                {
+                    lightness = 0.1;
+                }
+                else
+                {
+                    lightness = lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue);
+                }
+                res = changeColorIntensity(room.color, lightness);
             }
             return res;
         }

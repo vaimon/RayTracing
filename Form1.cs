@@ -46,14 +46,14 @@ namespace RayTracing
             double roomSide = 20;
 
             sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon);
-            cube = new Cube(new Point(-5,-7,17), 6, Color.DarkRed);
-            sphereOnCube = new Sphere(new Point(-5, -2, 17), 2, Color.DarkGreen);
+            cube = new Cube(new Point(-5,-7,16), 6, Color.DarkRed);
+            sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen);
             leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed);
             rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy);
             backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray);
 
 
-            rayTracing = new RayTracing(new LightSource(new Point(0, 10, 10), 1.5), new Room(center, roomSide,leftWall,rightWall,backWall));
+            rayTracing = new RayTracing(new LightSource(new Point(0, 9, 9), 1.5), new Room(center, roomSide,leftWall,rightWall,backWall));
             rayTracing.renderProgress += updateProgress;
 
             backWallScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 100, 200, 200);
@@ -136,6 +136,7 @@ namespace RayTracing
             labelTime.Visible = true;
             progressBar.Visible = true;
             rayTracing.addShape(sphereOnCube);
+            //rayTracing.addShape(new Face(new Point(-5, -7 + 3, 16), new Vector(0, 1, 0), new Vector(0, 0, 1), 6, 6, Color.DarkRed));
             rayTracing.addShape(cube);
             rayTracing.addShape(sphereOnGround);
             runAsyncComputation();
