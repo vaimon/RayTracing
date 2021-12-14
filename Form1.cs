@@ -16,7 +16,7 @@ namespace RayTracing
         public Form1()
         {
             InitializeComponent();
-            rayTracing = new RayTracing(new LightSource(new Point(0,10,10),1.5), new Room(new Point(0,0,11),20, Color.Gray));
+            rayTracing = new RayTracing(new LightSource(new Point(0,10,10),1.5), new Room(new Point(0,0,9),20, Color.Gray));
             rayTracing.renderProgress += updateProgress;
             rayTracing.addShape(new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon));
             //rayTracing.addShape(new Sphere(new Point(-1, -1.5, 12), 3, Color.DarkRed));
@@ -51,7 +51,7 @@ namespace RayTracing
         {
             try
             {
-                var bitmap = await Task.Run(() => rayTracing.compute(new Size(768,576)));
+                var bitmap = await Task.Run(() => rayTracing.compute(new Size(640,480)));
                 var form = new FormResult(bitmap);
                 form.Show();
             } catch (Exception e)
