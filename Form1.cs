@@ -36,6 +36,8 @@ namespace RayTracing
         Face rightWall;
         Face backWall;
 
+        LightSource additionalLight = new LightSource(new Point(-7, 7, 0), 0.8);
+
         public Form1()
         {
             InitializeComponent();
@@ -45,27 +47,34 @@ namespace RayTracing
             var center = new Point(0, 0, 9);
             double roomSide = 20;
 
-            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon, new Material(10, 0.1, 0.85, 0.05));
-            cube = new Cube(new Point(-5,-7,16), 6, Color.DarkRed, new Material(40, 0.25, 0.7, 0.05));
-            sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen, new Material(40, 0.25, 0.7, 0.05));
-            leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed, new Material(0, 0, 0.9, 0.1));
-            rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy, new Material(0, 0, 0.9, 0.1));
-            backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1));
-
+            initShapes(center,roomSide);
+            initScheme();
 
             rayTracing = new RayTracing(new Room(center, roomSide,leftWall,rightWall,backWall));
             rayTracing.renderProgress += updateProgress;
 
-            backWallScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 100, 200, 200);
-            cubeScheme = new Rectangle(canvas.Width / 2 - 125, canvas.Height / 2 + 25, 100, 100);
-            sphereOnCubeScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 25, 50, 50);
-            sphereOnGroundScheme = new Rectangle(canvas.Width / 2 + 25, canvas.Height / 2 + 40, 100, 100);
             currentItemType = SelectedItem.BackWall;
             currentItem = backWall;
             redrawScheme();
         }
 
-        
+        void initShapes(Point center, double roomSide)
+        {
+            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon, new Material(10, 0.1, 0.85, 0.05));
+            cube = new Cube(new Point(-5, -7, 16), 6, Color.DarkRed, new Material(40, 0.25, 0.7, 0.05));
+            sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen, new Material(40, 0.25, 0.7, 0.05));
+            leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed, new Material(0, 0, 0.9, 0.1));
+            rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy, new Material(0, 0, 0.9, 0.1));
+            backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1));
+        }
+
+        void initScheme()
+        {
+            backWallScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 100, 200, 200);
+            cubeScheme = new Rectangle(canvas.Width / 2 - 125, canvas.Height / 2 + 25, 100, 100);
+            sphereOnCubeScheme = new Rectangle(canvas.Width / 2 - 100, canvas.Height / 2 - 25, 50, 50);
+            sphereOnGroundScheme = new Rectangle(canvas.Width / 2 + 25, canvas.Height / 2 + 40, 100, 100);
+        }
 
         void redrawScheme()
         {
@@ -102,8 +111,6 @@ namespace RayTracing
             {
                 g.DrawLine(rightwallPen, new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y), new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y + backWallScheme.Height));
             }
-
-            
 
             g.FillRectangle(new SolidBrush(cube.color), cubeScheme);
             g.DrawRectangle(cubePen, cubeScheme);
@@ -144,7 +151,12 @@ namespace RayTracing
             rayTracing.addShape(sphereOnGround);
             
             rayTracing.addLightSource(new LightSource(new Point(0, 9, 9), 1));
-            rayTracing.addLightSource(new LightSource(new Point(-7, 7, 0), 0.8));
+
+            if (checkBoxAdditionalLight.Checked)
+            {
+                rayTracing.addLightSource(additionalLight);
+            }
+            
             runAsyncComputation();
         }
 
@@ -202,6 +214,34 @@ namespace RayTracing
                 currentItem.color = colorDialog1.Color;
                 redrawScheme();
             }
+        }
+
+        private void checkBoxAdditionalLight_CheckedChanged(object sender, EventArgs e)
+        {
+            lightValue.Enabled = checkBoxAdditionalLight.Checked;
+            lightX.Enabled = checkBoxAdditionalLight.Checked;
+            lightY.Enabled = checkBoxAdditionalLight.Checked;
+            lightZ.Enabled = checkBoxAdditionalLight.Checked;
+        }
+
+        private void lightX_ValueChanged(object sender, EventArgs e)
+        {
+            additionalLight.location.x = (double)lightX.Value;
+        }
+
+        private void lightY_ValueChanged(object sender, EventArgs e)
+        {
+            additionalLight.location.y = (double)lightY.Value;
+        }
+
+        private void lightZ_ValueChanged(object sender, EventArgs e)
+        {
+            additionalLight.location.z = (double)lightZ.Value;
+        }
+
+        private void lightValue_ValueChanged(object sender, EventArgs e)
+        {
+            additionalLight.intensity = (double)lightValue.Value;
         }
     }
 }
