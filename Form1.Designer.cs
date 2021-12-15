@@ -37,7 +37,7 @@ namespace RayTracing
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonChangeColor = new System.Windows.Forms.Button();
             this.transparencyValue = new System.Windows.Forms.NumericUpDown();
-            this.mirrorValue = new System.Windows.Forms.NumericUpDown();
+            this.reflectivityValue = new System.Windows.Forms.NumericUpDown();
             this.checkTransparency = new System.Windows.Forms.CheckBox();
             this.checkMirror = new System.Windows.Forms.CheckBox();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
@@ -55,7 +55,7 @@ namespace RayTracing
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.transparencyValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mirrorValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.reflectivityValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightZ)).BeginInit();
@@ -116,7 +116,7 @@ namespace RayTracing
             // 
             this.groupBox2.Controls.Add(this.buttonChangeColor);
             this.groupBox2.Controls.Add(this.transparencyValue);
-            this.groupBox2.Controls.Add(this.mirrorValue);
+            this.groupBox2.Controls.Add(this.reflectivityValue);
             this.groupBox2.Controls.Add(this.checkTransparency);
             this.groupBox2.Controls.Add(this.checkMirror);
             this.groupBox2.Location = new System.Drawing.Point(608, 12);
@@ -154,25 +154,27 @@ namespace RayTracing
             this.transparencyValue.Name = "transparencyValue";
             this.transparencyValue.Size = new System.Drawing.Size(122, 31);
             this.transparencyValue.TabIndex = 1;
+            this.transparencyValue.ValueChanged += new System.EventHandler(this.transparencyValue_ValueChanged);
             // 
-            // mirrorValue
+            // reflectivityValue
             // 
-            this.mirrorValue.DecimalPlaces = 2;
-            this.mirrorValue.Enabled = false;
-            this.mirrorValue.Increment = new decimal(new int[] {
+            this.reflectivityValue.DecimalPlaces = 2;
+            this.reflectivityValue.Enabled = false;
+            this.reflectivityValue.Increment = new decimal(new int[] {
             1,
             0,
             0,
             131072});
-            this.mirrorValue.Location = new System.Drawing.Point(225, 136);
-            this.mirrorValue.Maximum = new decimal(new int[] {
+            this.reflectivityValue.Location = new System.Drawing.Point(225, 136);
+            this.reflectivityValue.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.mirrorValue.Name = "mirrorValue";
-            this.mirrorValue.Size = new System.Drawing.Size(122, 31);
-            this.mirrorValue.TabIndex = 1;
+            this.reflectivityValue.Name = "reflectivityValue";
+            this.reflectivityValue.Size = new System.Drawing.Size(122, 31);
+            this.reflectivityValue.TabIndex = 1;
+            this.reflectivityValue.ValueChanged += new System.EventHandler(this.reflectivityValue_ValueChanged);
             // 
             // checkTransparency
             // 
@@ -183,6 +185,7 @@ namespace RayTracing
             this.checkTransparency.TabIndex = 0;
             this.checkTransparency.Text = "Прозрачность";
             this.checkTransparency.UseVisualStyleBackColor = true;
+            this.checkTransparency.CheckedChanged += new System.EventHandler(this.checkTransparency_CheckedChanged);
             // 
             // checkMirror
             // 
@@ -193,6 +196,7 @@ namespace RayTracing
             this.checkMirror.TabIndex = 0;
             this.checkMirror.Text = "Зеркальность";
             this.checkMirror.UseVisualStyleBackColor = true;
+            this.checkMirror.CheckedChanged += new System.EventHandler(this.checkMirror_CheckedChanged);
             // 
             // checkBoxAdditionalLight
             // 
@@ -369,7 +373,7 @@ namespace RayTracing
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.transparencyValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mirrorValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.reflectivityValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lightZ)).EndInit();
@@ -390,7 +394,7 @@ namespace RayTracing
         private System.Windows.Forms.PictureBox canvas;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.NumericUpDown transparencyValue;
-        private System.Windows.Forms.NumericUpDown mirrorValue;
+        private System.Windows.Forms.NumericUpDown reflectivityValue;
         private System.Windows.Forms.CheckBox checkTransparency;
         private System.Windows.Forms.CheckBox checkMirror;
         private System.Windows.Forms.ColorDialog colorDialog1;
