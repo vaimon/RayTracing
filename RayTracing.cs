@@ -69,9 +69,14 @@ namespace RayTracing
             return false;
         }
 
-        Vector getReflectionRay(Vector shadowRay, Vector normale)
+        Vector getLightReflectionRay(Vector shadowRay, Vector normale)
         {
             return (2 * (shadowRay ^ normale) * normale - shadowRay).normalize();
+        }
+        
+        Vector getViewReflectionRay(Vector viewRay, Vector normale)
+        {
+            return (2 * ((-1 * viewRay) ^ normale) * normale - (-1 * viewRay)).normalize();
         }
 
         double computeLightness(Shape shape, Tuple<Point, Vector> intersectionAndNormale, Vector viewRay)
@@ -82,7 +87,7 @@ namespace RayTracing
             foreach (var lightSource in lightSources)
             {
                 var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
-                var reflectionRay = getReflectionRay(shadowRay, intersectionAndNormale.Item2);
+                var reflectionRay = getLightReflectionRay(shadowRay, intersectionAndNormale.Item2);
 
                 if (doesRayIntersectSomething(shadowRay, intersectionAndNormale.Item1))
                 {
@@ -101,27 +106,50 @@ namespace RayTracing
                                     specularLightness * shape.material.kspecular;
         }
 
-        Color shootRay(Vector viewRay)
+        Color mixColors(Color first, Color second, double secondToFirstRatio)
+        {
+            return Color.FromArgb((byte) ((second.R * secondToFirstRatio) + first.R * (1 - secondToFirstRatio)), (byte) ((second.G * secondToFirstRatio) + first.G * (1 - secondToFirstRatio)),(byte) ((second.B * secondToFirstRatio) + first.B * (1 - secondToFirstRatio)));
+        }
+
+        Color shootRay(Vector viewRay, Point origin, int depth = 0)
         {
             double nearestPoint = double.MaxValue;
+            if (depth > 4)
+            {
+                return Color.Gray;
+            }
             Color res = Color.Transparent;
             foreach (var shape in scene)
             {
                 Tuple<Point, Vector> intersectionAndNormale;
-                if ((intersectionAndNormale = shape.getIntersection(viewRay, cameraPosition)) != null &&
+                if ((intersectionAndNormale = shape.getIntersection(viewRay, origin)) != null &&
                     intersectionAndNormale.Item1.z < nearestPoint)
                 {
                     nearestPoint = intersectionAndNormale.Item1.z;
                     res = changeColorIntensity(shape.color, computeLightness(shape,intersectionAndNormale,viewRay));
+                    if (shape.material.reflectivity > 0)
+                    {
+                        var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
+                        res = mixColors(res, reflectedColor, shape.material.reflectivity);
+                    }
                 }
             }
 
             if (res.ToArgb() == Color.Transparent.ToArgb())
             {
-                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, cameraPosition);
+                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, origin);
+                if (intersectionAndNormale == null)
+                {
+                    return Color.Black;
+                }
                 res = changeColorIntensity(room.color, computeLightness(room,intersectionAndNormale,viewRay));
+                if (room.material.reflectivity > 0)
+                {
+                    var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
+                    res = mixColors(res, reflectedColor, room.material.reflectivity);
+                }
             }
-
+            
             return res;
         }
 
@@ -145,7 +173,7 @@ namespace RayTracing
                             frameSize.Width / frameSize.Height,
                             -(2 * (y + 0.5) / frameSize.Height - 1) * Math.Tan(Geometry.degreesToRadians(fov / 2)),
                             1, true);
-                        var color = shootRay(ray);
+                        var color = shootRay(ray, cameraPosition);
                         fbitmap.SetPixel(new System.Drawing.Point(x, y), color);
                         processedPixelCount++;
                         if (y % 10 == 0)

@@ -33,9 +33,9 @@ namespace RayTracing
             foreach (var face in faces)
             {
                 Tuple<Point, Vector> intersectionAndNormale;
-                if ((intersectionAndNormale = face.getIntersection(direction, origin)) != null && intersectionAndNormale.Item1.z < nearestPoint)
+                if ((intersectionAndNormale = face.getIntersection(direction, origin)) != null && Geometry.distance(origin, intersectionAndNormale.Item1) < nearestPoint)
                 {
-                    nearestPoint = intersectionAndNormale.Item1.z;
+                    nearestPoint = Geometry.distance(origin, intersectionAndNormale.Item1);
                     res =  intersectionAndNormale;
                 }
             }

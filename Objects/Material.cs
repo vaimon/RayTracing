@@ -14,12 +14,17 @@ namespace RayTracing
         public double kdiffuse;
         public double kambient;
 
-        public Material(double shininess, double kspecular, double kdiffuse, double kambient)
+        public double transparency;
+        public double reflectivity;
+        
+        public Material(double shininess, double kspecular, double kdiffuse, double kambient, double transparency, double reflectivity)
         {
             this.shininess = shininess;
             this.kspecular = kspecular;
             this.kdiffuse = kdiffuse;
             this.kambient = kambient;
+            this.transparency = transparency;
+            this.reflectivity = reflectivity;
         }
     }
 }

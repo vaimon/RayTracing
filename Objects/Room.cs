@@ -16,7 +16,7 @@ namespace RayTracing
             this.center = center;
             this.side = side;
             faces = new List<Face>();
-            var material = new Material(0,0,0.9,0.1);
+            var material = new Material(0,0,0.9,0.1,0,0);
             faces.Add(new Face(new Point(center.x, center.y, center.z - side / 2), new Vector(0, 0, 1), new Vector(0, 1, 0), side, side,Color.Gray, material));
             faces.Add(backWall);
             faces.Add(new Face(new Point(center.x, center.y + side / 2, center.z), new Vector(0, -1, 0), new Vector(0, 0, 1), side, side,Color.Gray, material));
