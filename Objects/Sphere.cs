@@ -11,11 +11,12 @@ namespace RayTracing
     {
         double radius;
 
-        public Sphere(Point center, double radius, Color color)
+        public Sphere(Point center, double radius, Color color, Material material)
         {
             this.center = center;
             this.radius = radius;
             this.color = color;
+            this.material = material;
         }
 
 

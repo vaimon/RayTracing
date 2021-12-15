@@ -45,12 +45,12 @@ namespace RayTracing
             var center = new Point(0, 0, 9);
             double roomSide = 20;
 
-            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon);
-            cube = new Cube(new Point(-5,-7,16), 6, Color.DarkRed);
-            sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen);
-            leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed);
-            rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy);
-            backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray);
+            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon, new Material(10, 0.1, 0.85, 0.05));
+            cube = new Cube(new Point(-5,-7,16), 6, Color.DarkRed, new Material(10, 0.1, 0.85, 0.05));
+            sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen, new Material(40, 0.25, 0.7, 0.05));
+            leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed, new Material(0, 0, 0.9, 0.1));
+            rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0), new Vector(0, 1, 0), roomSide, roomSide, Color.Navy, new Material(0, 0, 0.9, 0.1));
+            backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1));
 
 
             rayTracing = new RayTracing(new LightSource(new Point(0, 9, 9), 1.5), new Room(center, roomSide,leftWall,rightWall,backWall));

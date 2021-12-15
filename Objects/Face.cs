@@ -23,13 +23,14 @@ namespace RayTracing
             this.widthVector = (normale * heightVector).normalize();
         }
 
-        public Face(Point center, Vector normale, Vector heightVector, double width, double height, Color color)
+        public Face(Point center, Vector normale, Vector heightVector, double width, double height, Color color, Material material)
         {
             this.color = color;
             this.center = center;
             this.width = width;
             this.height = height;
             this.normale = normale;
+            this.material = material;
             this.heightVector = heightVector.normalize();
             this.widthVector = (normale * heightVector).normalize();
         }

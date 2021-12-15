@@ -11,11 +11,12 @@ namespace RayTracing
     {
         double side;
         private List<Face> faces;
-        public Cube(Point center, double side, Color color)
+        public Cube(Point center, double side, Color color, Material material)
         {
             this.center = center;
             this.side = side;
             this.color = color;
+            this.material = material;
             faces = new List<Face>();
             faces.Add(new Face(new Point(center.x, center.y, center.z - side / 2), new Vector(0, 0, -1), new Vector(0, 1, 0), side, side));
             faces.Add(new Face(new Point(center.x, center.y, center.z + side / 2), new Vector(0, 0, 1), new Vector(0, 1, 0), side, side));

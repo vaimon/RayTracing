@@ -55,32 +55,43 @@ namespace RayTracing
             return false;
         }
 
-        Color shootRay(Vector direction)
+        Vector getReflectionRay(Vector shadowRay, Vector normale)
+        {
+            return (2 * (shadowRay ^ normale) * normale - shadowRay).normalize();
+        }
+
+        Color shootRay(Vector viewRay)
         {
             double nearestPoint = double.MaxValue;
             Color res = Color.Transparent;
             foreach (var shape in scene)
             {
                 Tuple<Point,Vector> intersectionAndNormale;
-                if((intersectionAndNormale = shape.getIntersection(direction,cameraPosition)) != null && intersectionAndNormale.Item1.z < nearestPoint)
+                if((intersectionAndNormale = shape.getIntersection(viewRay,cameraPosition)) != null && intersectionAndNormale.Item1.z < nearestPoint)
                 {
                     nearestPoint = intersectionAndNormale.Item1.z;
+                    double diffuseLightness = 0;
+                    double specularLightness = 0;
+                    double ambientLightness = 1;
+
                     var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
-                    double lightness;
+                    var reflectionRay = getReflectionRay(shadowRay, intersectionAndNormale.Item2);
+                    
                     if (doesRayIntersectSomething(shadowRay, intersectionAndNormale.Item1))
                     {
-                        lightness = 0.1;
+                        continue;
                     }
-                    else
-                    {
-                        lightness = lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue);
-                    }
-                    res = changeColorIntensity(shape.color, lightness);
+
+                    diffuseLightness = lightSource.intensity * Math.Clamp(shadowRay ^ intersectionAndNormale.Item2, 0.0, double.MaxValue);
+                    specularLightness = lightSource.intensity  * Math.Pow(Math.Clamp(reflectionRay ^ (-1 * viewRay), 0.0, double.MaxValue),shape.material.shininess);
+
+                    double totalLightness = ambientLightness * shape.material.kambient + diffuseLightness * shape.material.kdiffuse + specularLightness * shape.material.kspecular;
+                    res = changeColorIntensity(shape.color, totalLightness);
                 }
             }
             if(res.ToArgb() == Color.Transparent.ToArgb())
             {
-                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(direction, cameraPosition);
+                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, cameraPosition);
                 var shadowRay = new Vector(intersectionAndNormale.Item1, lightSource.location, true);
                 double lightness;
                 if (doesRayIntersectSomething(shadowRay, intersectionAndNormale.Item1))
