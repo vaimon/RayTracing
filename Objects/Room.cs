@@ -37,6 +37,7 @@ namespace RayTracing
                     nearestPoint = intersectionAndNormale.Item1.z;
                     res = intersectionAndNormale;
                     color = face.color;
+                    material = face.material;
                 }
             }
             return res;
