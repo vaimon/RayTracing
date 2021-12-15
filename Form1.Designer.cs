@@ -65,9 +65,9 @@ namespace RayTracing
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(240, 462);
+            this.progressBar.Location = new System.Drawing.Point(12, 462);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(595, 44);
+            this.progressBar.Size = new System.Drawing.Size(587, 44);
             this.progressBar.TabIndex = 0;
             this.progressBar.Visible = false;
             // 
@@ -84,7 +84,7 @@ namespace RayTracing
             // labelTime
             // 
             this.labelTime.AutoSize = true;
-            this.labelTime.Location = new System.Drawing.Point(12, 472);
+            this.labelTime.Location = new System.Drawing.Point(602, 472);
             this.labelTime.Name = "labelTime";
             this.labelTime.Size = new System.Drawing.Size(68, 25);
             this.labelTime.TabIndex = 2;
