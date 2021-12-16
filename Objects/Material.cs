@@ -13,11 +13,12 @@ namespace RayTracing
         public double kspecular;
         public double kdiffuse;
         public double kambient;
-
+        public double krefraction;
+        
         public double transparency;
         public double reflectivity;
         
-        public Material(double shininess, double kspecular, double kdiffuse, double kambient, double transparency, double reflectivity)
+        public Material(double shininess, double kspecular, double kdiffuse, double kambient, double transparency, double reflectivity, double krefraction = 1.5)
         {
             this.shininess = shininess;
             this.kspecular = kspecular;
@@ -25,6 +26,7 @@ namespace RayTracing
             this.kambient = kambient;
             this.transparency = transparency;
             this.reflectivity = reflectivity;
+            this.krefraction = krefraction;
         }
     }
 }

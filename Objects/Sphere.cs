@@ -41,7 +41,8 @@ namespace RayTracing
                     Point projection = Geometry.getPointProjection(origin, direction, center);
                     double distance = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(Geometry.distance(center, projection), 2)) - Geometry.distance(origin,projection);
                     var intersection = Geometry.pointOnLine(origin, direction, distance);
-                    return Tuple.Create(intersection, new Vector(center, intersection, true));
+                    return null;
+                    //return Tuple.Create(intersection, new Vector(center, intersection, true));
                 }
             }
             else        // Центр сферы можно спроецировать на луч
@@ -66,6 +67,32 @@ namespace RayTracing
                     return Tuple.Create(intersection, new Vector(center, intersection, true));
                 }
             }
+        }
+
+        public override Tuple<Point, Vector> getInnerIntersection(Vector direction, Point origin)
+        {
+            direction = direction.normalize();
+            Vector sourceToCenter = new Vector(origin, center);
+            if((sourceToCenter ^ direction) < 0)  // Центр сферы за точкой выпуска луча
+            {
+                return null;
+            }
+            Point projection = Geometry.getPointProjection(origin, direction, center);
+            if(Geometry.distance(center,projection) - radius > 0.00001)
+            {
+                return null;
+            }
+            double distance = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(Geometry.distance(center, projection), 2));
+            if(Geometry.distance(origin, center) > radius)
+            {
+                distance = Geometry.distance(origin, projection) - distance;
+            }
+            else
+            {
+                distance = Geometry.distance(origin, projection) + distance;
+            }
+            var intersection = Geometry.pointOnLine(origin, direction, distance);
+            return Tuple.Create(intersection, new Vector(center, intersection, true));
         }
     }
 }

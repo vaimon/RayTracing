@@ -65,7 +65,8 @@ namespace RayTracing
             initShapes(center, roomSide);
             initScheme();
 
-            rayTracing = new RayTracing(new Room(center, roomSide, leftWall, rightWall, backWall,floor,ceiling,cameraWall));
+            rayTracing = new RayTracing(new Room(center, roomSide, leftWall, rightWall, backWall, floor, ceiling,
+                cameraWall));
             rayTracing.renderProgress += updateProgress;
 
             currentItemType = SelectedItem.BackWall;
@@ -81,16 +82,19 @@ namespace RayTracing
             cube = new Cube(new Point(-5, -7, 16), 6, Color.DarkRed, new Material(40, 0.25, 0.7, 0.05, 0, 0));
             sphereOnCube = new Sphere(new Point(-5, 0, 17), 2, Color.DarkGreen,
                 new Material(40, 0.25, 0.7, 0.05, 0, 0));
-            
+
             leftWall = new Face(new Point(center.x - roomSide / 2, center.y, center.z), new Vector(1, 0, 0),
                 new Vector(0, 1, 0), roomSide, roomSide, Color.IndianRed, new Material(0, 0, 0.9, 0.1, 0, 0));
             rightWall = new Face(new Point(center.x + roomSide / 2, center.y, center.z), new Vector(-1, 0, 0),
                 new Vector(0, 1, 0), roomSide, roomSide, Color.Navy, new Material(0, 0, 0.9, 0.1, 0, 0));
             backWall = new Face(new Point(center.x, center.y, center.z + roomSide / 2), new Vector(0, 0, -1),
                 new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
-            cameraWall = new Face(new Point(center.x, center.y, center.z - roomSide / 2), new Vector(0, 0, 1), new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
-            ceiling = new Face(new Point(center.x, center.y + roomSide / 2, center.z), new Vector(0, -1, 0), new Vector(0, 0, 1), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
-            floor = new Face(new Point(center.x, center.y - roomSide / 2, center.z), new Vector(0, 1, 0), new Vector(0, 0, 1), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
+            cameraWall = new Face(new Point(center.x, center.y, center.z - roomSide / 2), new Vector(0, 0, 1),
+                new Vector(0, 1, 0), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
+            ceiling = new Face(new Point(center.x, center.y + roomSide / 2, center.z), new Vector(0, -1, 0),
+                new Vector(0, 0, 1), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
+            floor = new Face(new Point(center.x, center.y - roomSide / 2, center.z), new Vector(0, 1, 0),
+                new Vector(0, 0, 1), roomSide, roomSide, Color.Gray, new Material(0, 0, 0.9, 0.1, 0, 0));
         }
 
         void initScheme()
@@ -125,7 +129,7 @@ namespace RayTracing
             //rayTracing.addShape(new Face(new Point(-5, -7 + 3, 16), new Vector(0, 1, 0), new Vector(0, 0, 1), 6, 6, Color.DarkRed));
             rayTracing.addShape(cube);
             rayTracing.addShape(sphereOnGround);
-            
+
             rayTracing.addShape(cameraWall);
             rayTracing.addShape(backWall);
             rayTracing.addShape(ceiling);
@@ -139,6 +143,7 @@ namespace RayTracing
             {
                 rayTracing.addLightSource(additionalLight);
             }
+
             changeInterfaceAvailability(false);
             runAsyncComputation();
         }
@@ -147,7 +152,7 @@ namespace RayTracing
         {
             try
             {
-                var bitmap = await Task.Run(() => rayTracing.compute(new Size(640,480)));
+                var bitmap = await Task.Run(() => rayTracing.compute(new Size(640, 480)));
                 changeInterfaceAvailability(true);
                 var form = new FormResult(bitmap);
                 form.Show();
@@ -200,6 +205,7 @@ namespace RayTracing
                     ceilingPen = highlightPen;
                     break;
             }
+
             // ========================== COLORS ==========================
             g.FillRectangle(new SolidBrush(backWall.color), backWallScheme);
 
@@ -209,7 +215,8 @@ namespace RayTracing
                     new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y),
                     new System.Drawing.Point(0, 0),
                     new System.Drawing.Point(canvas.Width, 0),
-                    new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y),
+                    new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width,
+                        backWallScheme.Location.Y),
                 });
             g.FillPolygon(new SolidBrush(leftWall.color),
                 new PointF[]
@@ -281,39 +288,45 @@ namespace RayTracing
             }
 
             // ========================== CEILING ==========================
-            if(currentItemType != SelectedItem.RightWall)
+            if (currentItemType != SelectedItem.RightWall)
             {
                 g.DrawLine(ceilingPen,
-                new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y),
-                new System.Drawing.Point(canvas.Width, 0));
+                    new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width,
+                        backWallScheme.Location.Y),
+                    new System.Drawing.Point(canvas.Width, 0));
             }
+
             if (currentItemType != SelectedItem.LeftWall)
             {
                 g.DrawLine(ceilingPen,
-                new System.Drawing.Point(backWallScheme.Location.X,
-                    backWallScheme.Location.Y),
-                new System.Drawing.Point(0, 0));
+                    new System.Drawing.Point(backWallScheme.Location.X,
+                        backWallScheme.Location.Y),
+                    new System.Drawing.Point(0, 0));
             }
+
             if (currentItemType == SelectedItem.Ceiling)
             {
                 g.DrawLine(ceilingPen,
                     new System.Drawing.Point(backWallScheme.Location.X, backWallScheme.Location.Y),
-                    new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width, backWallScheme.Location.Y));
+                    new System.Drawing.Point(backWallScheme.Location.X + backWallScheme.Width,
+                        backWallScheme.Location.Y));
             }
 
             // ========================== FLOOR ==========================
             if (currentItemType != SelectedItem.RightWall)
             {
                 g.DrawLine(floorPen,
-                new System.Drawing.Point(backWallScheme.Right, backWallScheme.Bottom),
-                new System.Drawing.Point(canvas.Width, canvas.Height));
+                    new System.Drawing.Point(backWallScheme.Right, backWallScheme.Bottom),
+                    new System.Drawing.Point(canvas.Width, canvas.Height));
             }
+
             if (currentItemType != SelectedItem.LeftWall)
             {
                 g.DrawLine(floorPen,
-                new System.Drawing.Point(backWallScheme.Left, backWallScheme.Bottom),
-                new System.Drawing.Point(0, canvas.Height));
+                    new System.Drawing.Point(backWallScheme.Left, backWallScheme.Bottom),
+                    new System.Drawing.Point(0, canvas.Height));
             }
+
             if (currentItemType == SelectedItem.Floor)
             {
                 g.DrawLine(floorPen,
@@ -382,10 +395,11 @@ namespace RayTracing
             updateValuesForSelectedItem();
             redrawScheme();
         }
-        
+
         void updateValuesForSelectedItem()
         {
-            if (currentItemType == SelectedItem.BackWall || currentItemType == SelectedItem.RightWall || currentItemType == SelectedItem.LeftWall ||
+            if (currentItemType == SelectedItem.BackWall || currentItemType == SelectedItem.RightWall ||
+                currentItemType == SelectedItem.LeftWall ||
                 currentItemType == SelectedItem.Ceiling || currentItemType == SelectedItem.Floor)
             {
                 checkTransparency.Enabled = false;
@@ -445,23 +459,23 @@ namespace RayTracing
         private void checkMirror_CheckedChanged(object sender, EventArgs e)
         {
             reflectivityValue.Enabled = checkMirror.Checked;
-            reflectivityValue.Value = (decimal)(checkMirror.Checked? 1.0 : 0.0);
+            reflectivityValue.Value = (decimal) (checkMirror.Checked ? 1.0 : 0.0);
         }
 
         private void checkTransparency_CheckedChanged(object sender, EventArgs e)
         {
             transparencyValue.Enabled = checkTransparency.Checked;
-            transparencyValue.Value = (decimal)(checkTransparency.Checked ? 1.0 : 0.0);
+            transparencyValue.Value = (decimal) (checkTransparency.Checked ? 1.0 : 0.0);
         }
 
         private void reflectivityValue_ValueChanged(object sender, EventArgs e)
         {
-            currentItem.material.reflectivity = (double)reflectivityValue.Value;
+            currentItem.material.reflectivity = (double) reflectivityValue.Value;
         }
 
         private void transparencyValue_ValueChanged(object sender, EventArgs e)
         {
-            currentItem.material.transparency = (double)transparencyValue.Value;
+            currentItem.material.transparency = (double) transparencyValue.Value;
         }
 
         void changeInterfaceAvailability(bool isEnabled)

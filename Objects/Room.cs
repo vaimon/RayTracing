@@ -42,5 +42,10 @@ namespace RayTracing
             }
             return res;
         }
+
+        public override Tuple<Point, Vector> getInnerIntersection(Vector direction, Point origin)
+        {
+            return null;
+        }
     }
 }

@@ -41,5 +41,19 @@ namespace RayTracing
             }
             return res;
         }
+
+        public override Tuple<Point, Vector> getInnerIntersection(Vector direction, Point origin)
+        {
+            Tuple<Point, Vector> res = null;
+            foreach (var face in faces)
+            {
+                Tuple<Point, Vector> intersectionAndNormale;
+                if ((intersectionAndNormale = face.getInnerIntersection(direction, origin)) != null)
+                {
+                    res =  intersectionAndNormale;
+                }
+            }
+            return res;
+        }
     }
 }

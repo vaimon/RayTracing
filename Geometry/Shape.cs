@@ -14,5 +14,6 @@ namespace RayTracing
         public Material material;
 
         public abstract Tuple<Point,Vector> getIntersection(Vector direction, Point origin);
+        public abstract Tuple<Point,Vector> getInnerIntersection(Vector direction, Point origin);
     }
 }

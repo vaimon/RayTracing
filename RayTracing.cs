@@ -64,6 +64,7 @@ namespace RayTracing
                 {
                     continue;
                 }
+
                 if (shape.getIntersection(direction, origin) != null)
                 {
                     return true;
@@ -77,10 +78,38 @@ namespace RayTracing
         {
             return (2 * (shadowRay ^ normale) * normale - shadowRay).normalize();
         }
-        
+
         Vector getViewReflectionRay(Vector viewRay, Vector normale)
         {
             return (2 * ((-1 * viewRay) ^ normale) * normale - (-1 * viewRay)).normalize();
+        }
+
+        Vector getRefractionRay(Vector viewRay, Vector normale, double n1, double n2)
+        {
+            // double cosi = -Math.Max(-1, Math.Min(1, (-1 * viewRay) ^ normale));
+            // Vector n = normale;
+            // double eta = environmentRefraction / objectRefraction;
+            // if (cosi < 0)
+            // {
+            //     cosi = -cosi;
+            //     n = -1 * normale;
+            //     eta = objectRefraction / environmentRefraction;
+            // }
+            // double k = 1 - eta * eta * (1 - cosi * cosi);
+            // return eta * (-1 * viewRay) + (eta * cosi - Math.Sqrt(k))*n;
+            
+            // double r = environmentRefraction / objectRefraction;
+            // double c = (-1 * normale) ^ viewRay;
+            // return (r * viewRay + (r * c - Math.Sqrt(1 - r * r * (1 - c * c))) * normale).normalize();
+            
+            double ratio = n1 / n2;
+            double refractionAngle = 
+                Math.Sqrt(1 - Math.Pow(ratio, 2) *
+                    (1 - Math.Pow(normale ^ viewRay, 2)));
+            return ratio * viewRay - (refractionAngle + ratio * (normale ^ viewRay)) * normale;
+
+            // return viewRay + (Math.Sqrt(((n2 * n2 - n1 * n1) / Math.Pow(viewRay ^ normale, 2)) + 1) - 1) *
+            //     (viewRay ^ normale) * normale;
         }
 
         double computeLightness(Shape shape, Tuple<Point, Vector> intersectionAndNormale, Vector viewRay)
@@ -106,13 +135,15 @@ namespace RayTracing
             }
 
             return ambientLightness * shape.material.kambient +
-                                    diffuseLightness * shape.material.kdiffuse +
-                                    specularLightness * shape.material.kspecular;
+                   diffuseLightness * shape.material.kdiffuse +
+                   specularLightness * shape.material.kspecular;
         }
 
         Color mixColors(Color first, Color second, double secondToFirstRatio)
         {
-            return Color.FromArgb((byte) ((second.R * secondToFirstRatio) + first.R * (1 - secondToFirstRatio)), (byte) ((second.G * secondToFirstRatio) + first.G * (1 - secondToFirstRatio)),(byte) ((second.B * secondToFirstRatio) + first.B * (1 - secondToFirstRatio)));
+            return Color.FromArgb((byte) ((second.R * secondToFirstRatio) + first.R * (1 - secondToFirstRatio)),
+                (byte) ((second.G * secondToFirstRatio) + first.G * (1 - secondToFirstRatio)),
+                (byte) ((second.B * secondToFirstRatio) + first.B * (1 - secondToFirstRatio)));
         }
 
         Color shootRay(Vector viewRay, Point origin, int depth = 0)
@@ -120,9 +151,9 @@ namespace RayTracing
             double nearestPoint = double.MaxValue;
             if (depth > 4)
             {
-                return Color.Gray;
+                return Color.Yellow;
             }
-            Color res = Color.Black;
+            Color res = Color.Lime;
             foreach (var shape in scene)
             {
                 Tuple<Point, Vector> intersectionAndNormale;
@@ -130,31 +161,36 @@ namespace RayTracing
                     intersectionAndNormale.Item1.z < nearestPoint)
                 {
                     nearestPoint = intersectionAndNormale.Item1.z;
-                    res = changeColorIntensity(shape.color, computeLightness(shape,intersectionAndNormale,viewRay));
+                    res = changeColorIntensity(shape.color, computeLightness(shape, intersectionAndNormale, viewRay));
                     if (shape.material.reflectivity > 0)
                     {
-                        var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
+                        var reflectedColor = shootRay(getViewReflectionRay(viewRay, intersectionAndNormale.Item2),
+                            intersectionAndNormale.Item1, depth + 1);
                         res = mixColors(res, reflectedColor, shape.material.reflectivity);
+                    }
+
+                    if (shape.material.transparency > 0)
+                    {
+                        var refractedOutRay = refractRay(shape, intersectionAndNormale, viewRay);
+                        
+                        var refractedColor = shootRay(refractedOutRay.Item2, refractedOutRay.Item1, depth + 1);
+                        res = mixColors(res, refractedColor, shape.material.transparency);
                     }
                 }
             }
-
-            // if (res.ToArgb() == Color.Transparent.ToArgb())
-            // {
-            //     Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, origin);
-            //     if (intersectionAndNormale == null)
-            //     {
-            //         return Color.Black;
-            //     }
-            //     res = changeColorIntensity(room.color, computeLightness(room,intersectionAndNormale,viewRay));
-            //     if (room.material.reflectivity > 0)
-            //     {
-            //         var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
-            //         res = mixColors(res, reflectedColor, room.material.reflectivity);
-            //     }
-            // }
-            
             return res;
+        }
+
+        Tuple<Point, Vector> refractRay(Shape shape, Tuple<Point, Vector> intersectionAndNormale, Vector viewRay)
+        {
+            var refractionRay = getRefractionRay(viewRay, intersectionAndNormale.Item2, 1, shape.material.krefraction);
+            //return Tuple.Create(intersectionAndNormale.Item1, refractionRay);
+            var innerIntersectionAndNormale = shape.getInnerIntersection(refractionRay, intersectionAndNormale.Item1);
+            if (innerIntersectionAndNormale == null)
+            {
+                return null;
+            }
+            return Tuple.Create(innerIntersectionAndNormale.Item1, getRefractionRay(refractionRay,intersectionAndNormale.Item2,shape.material.krefraction,1));
         }
 
         public Bitmap compute(Size frameSize)
