@@ -127,6 +127,13 @@ namespace RayTracing
             //rayTracing.addShape(new Face(new Point(-5, -7 + 3, 16), new Vector(0, 1, 0), new Vector(0, 0, 1), 6, 6, Color.DarkRed));
             rayTracing.addShape(cube);
             rayTracing.addShape(sphereOnGround);
+            
+            rayTracing.addShape(cameraWall);
+            rayTracing.addShape(backWall);
+            rayTracing.addShape(ceiling);
+            rayTracing.addShape(floor);
+            rayTracing.addShape(rightWall);
+            rayTracing.addShape(leftWall);
 
             rayTracing.addLightSource(new LightSource(new Point(0, 9, 9), 1));
 
