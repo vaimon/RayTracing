@@ -376,12 +376,9 @@ namespace RayTracing
             updateValuesForSelectedItem();
             redrawScheme();
         }
-
-        bool anotherStupidFlagJustToBeSureThatWeAreNotProgrammaticallyUpdatingNumericValues = false;
-
+        
         void updateValuesForSelectedItem()
         {
-            anotherStupidFlagJustToBeSureThatWeAreNotProgrammaticallyUpdatingNumericValues = true;
             if (currentItemType == SelectedItem.BackWall || currentItemType == SelectedItem.RightWall || currentItemType == SelectedItem.LeftWall ||
                 currentItemType == SelectedItem.Ceiling || currentItemType == SelectedItem.Floor)
             {
@@ -399,7 +396,6 @@ namespace RayTracing
             checkMirror.Checked = currentItem.material.reflectivity > 0;
             reflectivityValue.Enabled = currentItem.material.reflectivity > 0;
             reflectivityValue.Value = Convert.ToDecimal(currentItem.material.reflectivity);
-            anotherStupidFlagJustToBeSureThatWeAreNotProgrammaticallyUpdatingNumericValues = false;
         }
 
         private void buttonChangeColor_Click(object sender, EventArgs e)
@@ -443,37 +439,23 @@ namespace RayTracing
         private void checkMirror_CheckedChanged(object sender, EventArgs e)
         {
             reflectivityValue.Enabled = checkMirror.Checked;
-            //currentItem.material.reflectivity = checkMirror.Checked ? (double)reflectivityValue.Value : 0.0;
-            if (!checkMirror.Checked)
-            {
-                currentItem.material.reflectivity = 0.0;
-            }
+            reflectivityValue.Value = (decimal)(checkMirror.Checked? 1.0 : 0.0);
         }
 
         private void checkTransparency_CheckedChanged(object sender, EventArgs e)
         {
             transparencyValue.Enabled = checkTransparency.Checked;
-            if (!checkTransparency.Checked)
-            {
-                currentItem.material.transparency = 0.0;
-            }
+            transparencyValue.Value = (decimal)(checkTransparency.Checked ? 1.0 : 0.0);
         }
 
         private void reflectivityValue_ValueChanged(object sender, EventArgs e)
         {
-            if (!anotherStupidFlagJustToBeSureThatWeAreNotProgrammaticallyUpdatingNumericValues)
-            {
-                currentItem.material.reflectivity = (double)reflectivityValue.Value;
-            }
+            currentItem.material.reflectivity = (double)reflectivityValue.Value;
         }
 
         private void transparencyValue_ValueChanged(object sender, EventArgs e)
         {
-            if (!anotherStupidFlagJustToBeSureThatWeAreNotProgrammaticallyUpdatingNumericValues)
-            {
-                currentItem.material.transparency = (double)transparencyValue.Value;
-            }
-            
+            currentItem.material.transparency = (double)transparencyValue.Value;
         }
     }
 }
