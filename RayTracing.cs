@@ -60,6 +60,10 @@ namespace RayTracing
         {
             foreach (var shape in scene)
             {
+                if (shape is Face)
+                {
+                    continue;
+                }
                 if (shape.getIntersection(direction, origin) != null)
                 {
                     return true;
@@ -118,7 +122,7 @@ namespace RayTracing
             {
                 return Color.Gray;
             }
-            Color res = Color.Transparent;
+            Color res = Color.Black;
             foreach (var shape in scene)
             {
                 Tuple<Point, Vector> intersectionAndNormale;
@@ -135,20 +139,20 @@ namespace RayTracing
                 }
             }
 
-            if (res.ToArgb() == Color.Transparent.ToArgb())
-            {
-                Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, origin);
-                if (intersectionAndNormale == null)
-                {
-                    return Color.Black;
-                }
-                res = changeColorIntensity(room.color, computeLightness(room,intersectionAndNormale,viewRay));
-                if (room.material.reflectivity > 0)
-                {
-                    var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
-                    res = mixColors(res, reflectedColor, room.material.reflectivity);
-                }
-            }
+            // if (res.ToArgb() == Color.Transparent.ToArgb())
+            // {
+            //     Tuple<Point, Vector> intersectionAndNormale = room.getIntersection(viewRay, origin);
+            //     if (intersectionAndNormale == null)
+            //     {
+            //         return Color.Black;
+            //     }
+            //     res = changeColorIntensity(room.color, computeLightness(room,intersectionAndNormale,viewRay));
+            //     if (room.material.reflectivity > 0)
+            //     {
+            //         var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
+            //         res = mixColors(res, reflectedColor, room.material.reflectivity);
+            //     }
+            // }
             
             return res;
         }
