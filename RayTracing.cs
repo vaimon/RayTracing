@@ -82,6 +82,14 @@ namespace RayTracing
         {
             return (2 * ((-1 * viewRay) ^ normale) * normale - (-1 * viewRay)).normalize();
         }
+        
+        // https://en.wikipedia.org/wiki/Snell%27s_law
+        Vector getRefractionRay(Vector viewRay, Vector normale, double n1, double n2)
+        {
+            double r = n1 / n2;
+            double c = (-1 * normale) ^ viewRay;
+            return r * viewRay + (r * c - Math.Sqrt(1 - r * r * (1 - c * c))) * normale;
+        }
 
         double computeLightness(Shape shape, Tuple<Point, Vector> intersectionAndNormale, Vector viewRay)
         {
@@ -115,16 +123,20 @@ namespace RayTracing
             return Color.FromArgb((byte) ((second.R * secondToFirstRatio) + first.R * (1 - secondToFirstRatio)), (byte) ((second.G * secondToFirstRatio) + first.G * (1 - secondToFirstRatio)),(byte) ((second.B * secondToFirstRatio) + first.B * (1 - secondToFirstRatio)));
         }
 
-        Color shootRay(Vector viewRay, Point origin, int depth = 0)
+        Color shootRay(Vector viewRay, Point origin, int sourceId = -1, int depth = 0)
         {
             double nearestPoint = double.MaxValue;
             if (depth > 4)
             {
                 return Color.Gray;
             }
-            Color res = Color.Black;
+            Color res = Color.Lime;
             foreach (var shape in scene)
             {
+                if (shape.id == sourceId)
+                {
+                    continue;
+                }
                 Tuple<Point, Vector> intersectionAndNormale;
                 if ((intersectionAndNormale = shape.getIntersection(viewRay, origin)) != null &&
                     intersectionAndNormale.Item1.z < nearestPoint)
@@ -135,6 +147,15 @@ namespace RayTracing
                     {
                         var reflectedColor = shootRay(getViewReflectionRay(viewRay,intersectionAndNormale.Item2), intersectionAndNormale.Item1, depth + 1);
                         res = mixColors(res, reflectedColor, shape.material.reflectivity);
+                    }
+                    
+                    if (shape.material.transparency > 0)
+                    {
+                        var refractionRay = getRefractionRay(viewRay, intersectionAndNormale.Item2, 1,
+                            shape.material.krefractivity).normalize();
+                        
+                        var refractedColor = shootRay(refractionRay, intersectionAndNormale.Item1, shape.id, depth + 1);
+                        res = mixColors(res, refractedColor, shape.material.transparency);
                     }
                 }
             }
