@@ -22,6 +22,10 @@ namespace RayTracing
             return $"({x}, {y}, {z})";
         }
 
+        public Point shift(Vector v, double distance)
+        {
+            return new Point(x + distance * v.x, y + distance * v.y, z + distance * v.z);
+        }
        
     }
 }

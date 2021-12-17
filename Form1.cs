@@ -76,8 +76,8 @@ namespace RayTracing
 
         void initShapes(Point center, double roomSide)
         {
-            sphereOnGround = new Sphere(new Point(5, -8, 17), 4, Color.DarkSalmon,
-                new Material(10, 0.1, 0.85, 0.05, 0, 0));
+            sphereOnGround = new Sphere(new Point(5, -7, 15), 3, Color.DarkSalmon,
+                new Material(70, 0.1, 0.85, 0.05, 0, 0));
             cube = new Cube(new Point(-5, -7, 16), 6, Color.DarkRed, new Material(40, 0.25, 0.7, 0.05, 0, 0));
             sphereOnCube = new Sphere(new Point(-5, 0, 16), 2, Color.DarkGreen,
                 new Material(40, 0.25, 0.7, 0.05, 0, 0));

@@ -130,7 +130,7 @@ namespace RayTracing
             {
                 return Color.Gray;
             }
-            Color res = Color.Lime;
+            Color res = Color.Black;
             foreach (var shape in scene)
             {
                 if (shape.id == sourceId)
@@ -153,8 +153,17 @@ namespace RayTracing
                     {
                         var refractionRay = getRefractionRay(viewRay, intersectionAndNormale.Item2, 1,
                             shape.material.krefractivity).normalize();
+                        var innerIntersection = shape.getIntersection(refractionRay, intersectionAndNormale.Item1.shift(refractionRay,0.1));
+                        if (innerIntersection == null)
+                        {
+                            innerIntersection = intersectionAndNormale;
+                        }
+                        if (Geometry.distance(innerIntersection.Item1, intersectionAndNormale.Item1) < 0.1)
+                        {
+                            int y;
+                        }
                         
-                        var refractedColor = shootRay(refractionRay, intersectionAndNormale.Item1, shape.id, depth + 1);
+                        var refractedColor = shootRay(getRefractionRay(refractionRay,-1 * innerIntersection.Item2,shape.material.krefractivity,1), innerIntersection.Item1, shape.id, depth + 1);
                         res = mixColors(res, refractedColor, shape.material.transparency);
                     }
                 }
